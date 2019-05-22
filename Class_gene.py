@@ -1,7 +1,9 @@
-#Version3 
+#Version4
 
 '''
-
+반대 방향의 서열도 출력할 수 있게 한다.
+간단한 버그 수정
+출력된 결과를 통해 버그가 있었다는 것을 알 수 있었다.
 '''
 
 base_DNA = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
@@ -24,12 +26,12 @@ class gene :
     
     for base in self.RNA5_3 :
       if base != 'U' :
-        self.DNA3_5 += base
+        self.DNA5_3 += base
       else :
-        self.DNA3_5 += 'T'
+        self.DNA5_3 += 'T'
         
-    for base in self.DNA3_5 :
-      self.DNA5_3 += base_DNA[base]
+    for base in self.DNA5_3 :
+      self.DNA3_5 += base_DNA[base]
       
       
     for i in range(len(self.RNA5_3)-3) :
@@ -52,3 +54,8 @@ class gene :
     print('RNA 5-3',self.RNA5_3)
     print('RNA 3-5',self.RNA3_5)
     print('amino', self.amino)
+    print()
+    print('DNA 5-3',self.DNA3_5[::-1],' 주형가닥')
+    print('DNA 3-5',self.DNA5_3[::-1])
+    print('RNA 5-3',self.RNA3_5[::-1])
+    print('RNA 3-5',self.RNA5_3[::-1])
