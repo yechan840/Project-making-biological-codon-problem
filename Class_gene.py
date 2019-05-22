@@ -1,8 +1,7 @@
-#version2 5 / 16
+#Version3 
 
 '''
-주형가닥으로부터 아미노산 서열을 알아내서 속성으로 설정하는 기능이 추가되었다.
-.show()에서 어떤 서열인지도 같이 출력하게 하였다.
+
 '''
 
 base_DNA = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
@@ -16,34 +15,40 @@ class gene :
 
     self.DNA5_3 = ''
     self.DNA3_5 = ''
-    self.RNA5_3 = ''
+    self.RNA5_3 = seq
     self.RNA3_5 = ''
     self.amino = ''
-
-
-    self.DNA5_3 = seq
-
-    for base in self.DNA5_3 :
-      self.DNA3_5 += base_DNA[base]
-
-    for base in self.DNA3_5 :
-      if base != 'T' :
-        self.RNA3_5 += base
+      
+    for base in self.RNA5_3 :
+      self.RNA3_5 += base_RNA[base]
+    
+    for base in self.RNA5_3 :
+      if base != 'U' :
+        self.DNA3_5 += base
       else :
-        self.RNA3_5 += 'U'
-
-    for base in self.RNA3_5 :
-      self.RNA5_3 += base_RNA[base]
-    
-    
+        self.DNA3_5 += 'T'
         
+    for base in self.DNA3_5 :
+      self.DNA5_3 += base_DNA[base]
+      
+      
+    for i in range(len(self.RNA5_3)-3) :
+      if self.RNA5_3[i:i+3] == 'AUG' :
+        break
+    start = i
     
-        
+    for i in range(start, len(self.RNA5_3), 3) :
+      if self.RNA5_3[i:i+3] in ['UAG', 'UAA', 'UGA'] :
+        break
+      self.amino += ' '+codon[self.RNA5_3[i:i+3]]
+      
+    self.amino = self.amino[1:]
+   
      
         
   def show(self) :
     print('DNA 5-3',self.DNA5_3)
-    print('DNA 3-5', self.DNA3_5)
+    print('DNA 3-5',self.DNA3_5, ' 주형가닥')
     print('RNA 5-3',self.RNA5_3)
     print('RNA 3-5',self.RNA3_5)
-    
+    print('amino', self.amino)
