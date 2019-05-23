@@ -12,6 +12,13 @@ def get_RNA(size) :
   RNA = ''
   for i in x :
     RNA += base_RNA[i]
+    
+  for i in range(size-2) :
+    sub = RNA[i:i+3]
+    while sub == 'AUG' :
+      sub = ''.join(np.random.choice(['A','G','C','U'],3))
+    RNA = RNA[:i] + sub + RNA[i+3:]
+   
   return RNA
 
 def get_RNA2(size) :
