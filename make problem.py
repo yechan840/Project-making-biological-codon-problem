@@ -13,14 +13,14 @@ def make_problem(*mutation,size=10, pre=5,post=5, stop=stop_codon[np.random.choi
     mutated_RNAs = []
   
     cnt = 0
-    pos = np.random.permutation(np.arange(size-1))
+    pos_list = np.random.permutation(np.arange(size-1))
     
     stop_list = []
   
     for mut in mutation :
         if mut[0]=='sub' and mut[2]==1 :
             stop = stop_codon[np.random.choice(3)]
-            RNA = RNA[:3*pos[cnt]] + np.random.choice(stop_codon_mut[stop]) + RNA[3*pos[cnt]+3:]
+            RNA = RNA[:3*pos_list[cnt]] + np.random.choice(stop_codon_mut[stop]) + RNA[3*pos_list[cnt]+3:]
             stop_list.append(stop)
             
         cnt += 1
@@ -31,20 +31,28 @@ def make_problem(*mutation,size=10, pre=5,post=5, stop=stop_codon[np.random.choi
       
         if mut[0] == 'sub' : #만약 돌연변이가 치환이라면
             if mut[2] == 0 : #길이 변화가 일어나지 않는다면
-                pos1 = pos[cnt]*3 + np.random.choice(2)
-                mutated_RNA = pre_RNA + RNA[:pos1] + get_RNA(mut[1]) + RNA[pos1+mut[1]:] + post_RNA
+                pos = pos_list[cnt]*3 + np.random.choice(2)
+                
+                sub = RNA[pos:pos+mut[1]]
+                
+                while True :
+                    sub2 = get_RNA(mut[1])
+                    if all([a!=b for a, b in zip(sub, sub2)]) :
+                        break
+                
+                mutated_RNA = pre_RNA + RNA[:pos] + sub2 + RNA[pos+mut[1]:] + post_RNA
         
             elif mut[2] == 1: #길이 수축이 일어나면
                 stop = stop_codon[np.random.choice(3)]
-                mutated_RNA = pre_RNA + RNA[:3*pos[cnt]] + stop_list[0] + RNA[3*pos[cnt]+3:] + post_RNA
+                mutated_RNA = pre_RNA + RNA[:3*pos_list[cnt]] + stop_list[0] + RNA[3*pos_list[cnt]+3:] + post_RNA
                 stop_list.pop(0)
         
             else : #길이 증가가 일어나면
     
-                stop = 'UAG'
+                stop = post_RNA[:3]
                 while True :
-                    pos1 = np.random.choice(3)
-                    stop2 = stop[:pos1] + get_RNA(mut[1]) + stop[pos1+mut[1]:]
+                    pos = np.random.choice(3)
+                    stop2 = stop[:pos] + get_RNA(mut[1]) + stop[pos+mut[1]:]
                     if stop2 not in stop_codon :
                         break
             
@@ -52,13 +60,13 @@ def make_problem(*mutation,size=10, pre=5,post=5, stop=stop_codon[np.random.choi
         
         
         elif mut[0] == 'del' : #만약 돌연변이가 삭제라면
-            pos1 = pos[cnt]*3 + np.random.choice(3)
-            mutated_RNA = pre_RNA + RNA[:pos1] + get_RNA(mut[1]) + RNA[pos1+mut[1]:] + post_RNA
+            pos = pos_list[cnt]*3 + np.random.choice(3)
+            mutated_RNA = pre_RNA + RNA[:pos] + RNA[pos+mut[1]:] + post_RNA
       
     
         else : #만약 돌연변이가 삽입이라면
-            pos1 = pos[cnt]*3 + np.random.choice(3)
-            mutated_RNA = pre_RNA + RNA[:pos1] + RNA[:pos1+mut[1]:] + post_RNA
+            pos = pos_list[cnt]*3 + np.random.choice(3)
+            mutated_RNA = pre_RNA + RNA[:pos] + get_RNA(mut[1]) + RNA[pos:] + post_RNA
       
       
         mutated_RNAs.append(mutated_RNA)
@@ -67,8 +75,15 @@ def make_problem(*mutation,size=10, pre=5,post=5, stop=stop_codon[np.random.choi
     original = pre_RNA + RNA + post_RNA
     gene(original).show()
   
-    for mutated_RNA, mut in zip(mutated_RNAs, mutation) :
-        print(mut[0])
+    for mutated_RNA, mut, pos in zip(mutated_RNAs, mutation, pos_list) :
+        print(mut[0], end=' ')
+        if len(mut)==3 :
+            if mut[2]==2 :
+                print(size+1)
+            else :
+                print(pos+2)
+        else :
+            print(pos+2)
         gene(mutated_RNA).show()
         
         
