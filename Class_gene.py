@@ -1,9 +1,10 @@
-#Version5
-
-'''
-base, codon dict를 class안으로 넣었다. 
-codon은 표준코돈표를 참고하여 더 채웠다.
-'''
+#Version6
+def gene_express(name, seq, start, final, lord=False) :
+    if lord :
+        print(name,seq[:start], ' '.join([seq[i:i+3] for i in range(start, final, 3)]), seq[final:], '주형가닥')
+    else :
+        print(name,seq[:start], ' '.join([seq[i:i+3] for i in range(start, final, 3)]), seq[final:])
+    
 
 
 class gene :
@@ -29,6 +30,7 @@ class gene :
         self.RNA5_3 = seq
         self.RNA3_5 = ''
         self.amino = ''
+        self.len = len(seq)
       
         for base in self.RNA5_3 :
             self.RNA3_5 += base_RNA[base]
@@ -45,28 +47,35 @@ class gene :
       
         for i in range(len(self.RNA5_3)-3) :
             if self.RNA5_3[i:i+3] == 'AUG' :
+                start = i
                 break
-            start = i
             
+        self.start = i
     
         for i in range(start, len(self.RNA5_3), 3) :
             if self.RNA5_3[i:i+3] in ['UAG', 'UAA', 'UGA'] :
+                self.amino += " "+self.RNA5_3[i:i+3]
+                self.final = i+3
                 break
             self.amino += ' '+codon[self.RNA5_3[i:i+3]]
       
         self.amino = self.amino[1:]
    
+
      
         
     def show(self) :
-        print('DNA 5-3',self.DNA5_3)
-        print('DNA 3-5',self.DNA3_5, ' 주형가닥')
-        print('RNA 5-3',self.RNA5_3)
-        print('RNA 3-5',self.RNA3_5)
+        
+        gene_express('DNA 5-3', self.DNA5_3, self.start, self.final)
+        gene_express('DNA 3-5', self.DNA3_5, self.start, self.final, True)
+        gene_express('RNA 5-3', self.RNA5_3, self.start, self.final)
+        gene_express('RNA 3-5', self.RNA3_5, self.start, self.final)
         print('amino', self.amino)
         print()
-        print('DNA 5-3',self.DNA3_5[::-1],' 주형가닥')
-        print('DNA 3-5',self.DNA5_3[::-1])
-        print('RNA 5-3',self.RNA3_5[::-1])
-        print('RNA 3-5',self.RNA5_3[::-1])
+        
+        print('Reverse Sequence')
+        gene_express('DNA 5-3',self.DNA3_5[::-1], self.len-self.final, self.len-self.start, True)
+        gene_express('DNA 3-5',self.DNA5_3[::-1], self.len-self.final, self.len-self.start)
+        gene_express('RNA 5-3',self.RNA3_5[::-1], self.len-self.final, self.len-self.start)
+        gene_express('RNA 3-5',self.RNA5_3[::-1], self.len-self.final, self.len-self.start)
         print()
