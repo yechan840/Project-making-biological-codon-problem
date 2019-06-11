@@ -60,6 +60,13 @@ class gene :
             self.amino += ' '+codon[self.RNA5_3[i:i+3]]
       
         self.amino = self.amino[1:]
+        self.amino_len = len(self.amino.split())
+        self.amino_dict = {}
+        for amino_acid in self.amino.split()[:-1] :
+            if amino_acid in self.amino_dict :
+                self.amino_dict[amino_acid] += 1
+            else :
+                self.amino_dict[amino_acid] = 1
    
 
      
@@ -70,7 +77,9 @@ class gene :
         gene_express('DNA 3-5', self.DNA3_5, self.start, self.final, True)
         gene_express('RNA 5-3', self.RNA5_3, self.start, self.final)
         gene_express('RNA 3-5', self.RNA3_5, self.start, self.final)
-        print('amino', self.amino)
+        print('amino', self.amino[:-3], self.amino_len)
+        print(self.amino_dict)
+        print("STOP CODON", self.amino[-3:])
         print()
         
         print('Reverse Sequence')
